@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="2">
+
+    <title>TerutenMacWebServer 언인스톨러</title>
+    <organization>com.tpwls30</organization>
+
+    <welcome    file="welcome.html"    mime-type="text/html" />
+    <conclusion file="conclusion.html" mime-type="text/html" />
+
+    <options customize="never" require-scripts="true" rootVolumeOnly="true" />
+
+    <choices-outline>
+        <line choice="uninstall"/>
+    </choices-outline>
+
+    <choice id="uninstall" title="TerutenMacWebServer 제거" visible="false">
+        <pkg-ref id="com.tpwls30.teruten-uninstaller"/>
+    </choice>
+
+    <pkg-ref id="com.tpwls30.teruten-uninstaller" version="1.0" auth="root">
+        #TerutenUninstaller.pkg
+    </pkg-ref>
+
+</installer-gui-script>

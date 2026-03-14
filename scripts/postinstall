@@ -1,0 +1,133 @@
+#!/bin/bash
+
+# ================================================
+# TerutenMacWebServer Uninstaller
+# Version: v1.0.0
+# ================================================
+
+LOG="/tmp/teruten_uninstall.log"
+exec > >(tee -a "$LOG") 2>&1
+
+echo "======================================"
+echo " TerutenMacWebServer 언인스톨 시작"
+echo " $(date)"
+echo "======================================"
+
+# 로그인된 사용자 / UID 구하기 (pkg는 root로 실행)
+LOGGED_IN_USER=$(stat -f "%Su" /dev/console 2>/dev/null)
+USER_UID=$(id -u "$LOGGED_IN_USER" 2>/dev/null)
+[ -z "$USER_UID" ] && USER_UID=501
+
+echo "  대상 사용자: $LOGGED_IN_USER (UID: $USER_UID)"
+
+# --- 1. 관련 프로세스 강제 종료 ---
+echo "[1/4] 관련 프로세스 종료 중..."
+
+PROCESS_NAMES=(
+    "WcbManager"
+    "TerutenMacWebServer"
+    "TerutenESAlert"
+    "TerminateAlert"
+)
+
+for PROC in "${PROCESS_NAMES[@]}"; do
+    PIDS=$(pgrep -f "$PROC" 2>/dev/null)
+    if [ -n "$PIDS" ]; then
+        kill -9 $PIDS 2>/dev/null
+        echo "  ✓ 종료됨: $PROC (PID: $PIDS)"
+    else
+        echo "  - 실행 중 아님: $PROC"
+    fi
+done
+
+# launchctl 서비스도 종료
+SERVICE_NAME=$(sudo -u "$LOGGED_IN_USER" launchctl list 2>/dev/null | grep teruten | awk '{print $3}')
+if [ -n "$SERVICE_NAME" ]; then
+    echo "  발견된 LaunchAgent: $SERVICE_NAME"
+    launchctl bootout "gui/${USER_UID}/${SERVICE_NAME}" 2>/dev/null
+    echo "  ✓ LaunchAgent 종료 완료"
+else
+    echo "  - 실행 중인 LaunchAgent 없음"
+fi
+
+# --- 2. LaunchAgent plist 삭제 ---
+echo "[2/4] LaunchAgent plist 파일 삭제 중..."
+
+PLISTS=(
+    "/Library/LaunchAgents/com.teruten.TerutenLocalWebServer.plist"
+    "/Library/LaunchAgents/com.teruten.TerutenLocalWebServer2.plist"
+    "/Users/${LOGGED_IN_USER}/Library/LaunchAgents/com.teruten.TerutenLocalWebServer.plist"
+    "/Users/${LOGGED_IN_USER}/Library/LaunchAgents/com.teruten.TerutenLocalWebServer2.plist"
+)
+
+for PLIST in "${PLISTS[@]}"; do
+    if [ -f "$PLIST" ]; then
+        rm -f "$PLIST"
+        echo "  ✓ 삭제됨: $PLIST"
+    else
+        echo "  - 없음: $PLIST"
+    fi
+done
+
+# --- 3. 앱 및 관련 파일 삭제 ---
+echo "[3/4] 앱 및 관련 파일 삭제 중..."
+
+# 앱 삭제
+TARGETS=(
+    "/Applications/TerutenMacWebServer.app"
+)
+
+for TARGET in "${TARGETS[@]}"; do
+    if [ -e "$TARGET" ]; then
+        rm -rf "$TARGET"
+        echo "  ✓ 삭제됨: $TARGET"
+    else
+        echo "  - 없음: $TARGET"
+    fi
+done
+
+# Internet Plug-Ins 폴더 내용 전체 삭제 (두 경로 모두)
+PLUGIN_DIRS=(
+    "/Library/Internet Plug-Ins"
+    "/Users/${LOGGED_IN_USER}/Library/Internet Plug-Ins"
+)
+
+for PLUGIN_DIR in "${PLUGIN_DIRS[@]}"; do
+    if [ -d "$PLUGIN_DIR" ]; then
+        # 폴더 자체는 남기고 내용물만 삭제
+        rm -rf "${PLUGIN_DIR:?}/"*
+        echo "  ✓ 내용 전체 삭제됨: $PLUGIN_DIR"
+    else
+        echo "  - 없음: $PLUGIN_DIR"
+    fi
+done
+
+
+# --- 5. 재부팅 여부 확인 대화상자 ---
+echo "[4/4] 재부팅 확인 중..."
+
+REBOOT_ANSWER=$(sudo -u "$LOGGED_IN_USER" osascript <<'APPLESCRIPT'
+set dialogResult to display dialog "TerutenMacWebServer 제거가 완료되었습니다." & return & return & "변경 사항을 적용하려면 재부팅이 필요합니다. 지금 재부팅하시겠습니까?" ¬
+    buttons {"아니오", "예"} ¬
+    default button "예" ¬
+    with title "언인스톨 완료" ¬
+    with icon note
+return button returned of dialogResult
+APPLESCRIPT
+)
+
+echo "  사용자 선택: $REBOOT_ANSWER"
+
+if [ "$REBOOT_ANSWER" = "예" ]; then
+    echo "  재부팅을 시작합니다..."
+    sleep 2
+    shutdown -r now "TerutenMacWebServer 언인스톨 완료 - 재부팅"
+else
+    echo "  재부팅을 건너뜁니다. 나중에 수동으로 재부팅해 주세요."
+fi
+
+echo "======================================"
+echo " 언인스톨 완료"
+echo "======================================"
+
+exit 0

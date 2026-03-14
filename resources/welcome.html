@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Pretendard', -apple-system, 'Apple SD Gothic Neo', sans-serif;
+      font-size: 13px;
+      color: #1d1d1f;
+      padding: 24px 28px;
+      line-height: 1.6;
+    }
+
+    h2 {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #000;
+    }
+
+    p {
+      margin-bottom: 14px;
+      color: #3a3a3c;
+    }
+
+    ul {
+      padding-left: 18px;
+      color: #3a3a3c;
+    }
+
+    ul li {
+      margin-bottom: 6px;
+    }
+
+    .path {
+      font-family: 'SF Mono', 'Menlo', monospace;
+      font-size: 11px;
+      background: #f2f2f7;
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h2>TerutenMacWebServer 언인스톨러</h2>
+  <p>이 패키지는 <strong>TerutenMacWebServer</strong>를 맥에서 완전히 제거합니다.</p>
+  <p>다음 항목이 삭제됩니다:</p>
+  <ul>
+    <li>실행 중인 관련 프로세스 강제 종료</li>
+    <li>LaunchAgent 서비스 및 plist 파일 삭제</li>
+    <li><span class="path">/Applications/TerutenMacWebServer.app</span> 삭제</li>
+    <li><span class="path">/Library/Internet Plug-Ins/</span> 내용 전체 삭제</li>
+    <li><span class="path">~/Library/Internet Plug-Ins/</span> 내용 전체 삭제</li>
+  </ul>
+</body>
+</html>
