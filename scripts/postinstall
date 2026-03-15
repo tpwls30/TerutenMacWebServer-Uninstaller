@@ -69,12 +69,57 @@ for PLIST in "${PLISTS[@]}"; do
     fi
 done
 
-# --- 3. 앱 및 관련 파일 삭제 ---
-echo "[3/4] 앱 및 관련 파일 삭제 중..."
-
 # 앱 삭제
+if [ -e "/Applications/TerutenMacWebServer.app" ]; then
+    rm -rf "/Applications/TerutenMacWebServer.app"
+    echo "  ✓ 삭제됨: /Applications/TerutenMacWebServer.app"
+else
+    echo "  - 없음: /Applications/TerutenMacWebServer.app"
+fi
+
+# # --- 3. 앱 및 관련 파일 삭제 ---
+# echo "[3/4] 앱 및 관련 파일 삭제 중..."
+
+# # 앱 삭제
+# TARGETS=(
+#     "/Applications/TerutenMacWebServer.app"
+# )
+
+# for TARGET in "${TARGETS[@]}"; do
+#     if [ -e "$TARGET" ]; then
+#         rm -rf "$TARGET"
+#         echo "  ✓ 삭제됨: $TARGET"
+#     else
+#         echo "  - 없음: $TARGET"
+#     fi
+# done
+
+# Internet Plug-Ins 파일 삭제
 TARGETS=(
-    "/Applications/TerutenMacWebServer.app"
+    "/Library/Internet Plug-Ins/PopManager.app"
+    "/Library/Internet Plug-Ins/PscProcSub.app"
+    "/Library/Internet Plug-Ins/PscProcSubC.app"
+    "/Library/Internet Plug-Ins/PscProcSubW.app"
+    "/Library/Internet Plug-Ins/TerminateAlert.app"
+    "/Library/Internet Plug-Ins/TerutenCert.crt"
+    "/Library/Internet Plug-Ins/TerutenESAlert.app"
+    "/Library/Internet Plug-Ins/TerutenMacWebServer.app"
+    "/Library/Internet Plug-Ins/TWMe.app"
+    "/Library/Internet Plug-Ins/TWMo.app"
+    "/Library/Internet Plug-Ins/WcbManager.app"
+    "/Library/Internet Plug-Ins/WebServerWatch.app"
+    "/Users/${LOGGED_IN_USER}/Library/Internet Plug-Ins/PopManager.app"
+    "/Users/${LOGGED_IN_USER}/Library/Internet Plug-Ins/PscProcSub.app"
+    "/Users/${LOGGED_IN_USER}/Library/Internet Plug-Ins/PscProcSubC.app"
+    "/Users/${LOGGED_IN_USER}/Library/Internet Plug-Ins/PscProcSubW.app"
+    "/Users/${LOGGED_IN_USER}/Library/Internet Plug-Ins/TerminateAlert.app"
+    "/Users/${LOGGED_IN_USER}/Library/Internet Plug-Ins/TerutenCert.crt"
+    "/Users/${LOGGED_IN_USER}/Library/Internet Plug-Ins/TerutenESAlert.app"
+    "/Users/${LOGGED_IN_USER}/Library/Internet Plug-Ins/TerutenMacWebServer.app"
+    "/Users/${LOGGED_IN_USER}/Library/Internet Plug-Ins/TWMe.app"
+    "/Users/${LOGGED_IN_USER}/Library/Internet Plug-Ins/TWMo.app"
+    "/Users/${LOGGED_IN_USER}/Library/Internet Plug-Ins/WcbManager.app"
+    "/Users/${LOGGED_IN_USER}/Library/Internet Plug-Ins/WebServerWatch.app"
 )
 
 for TARGET in "${TARGETS[@]}"; do
@@ -87,20 +132,20 @@ for TARGET in "${TARGETS[@]}"; do
 done
 
 # Internet Plug-Ins 폴더 내용 전체 삭제 (두 경로 모두)
-PLUGIN_DIRS=(
-    "/Library/Internet Plug-Ins"
-    "/Users/${LOGGED_IN_USER}/Library/Internet Plug-Ins"
-)
+# PLUGIN_DIRS=(
+#     "/Library/Internet Plug-Ins"
+#     "/Users/${LOGGED_IN_USER}/Library/Internet Plug-Ins"
+# )
 
-for PLUGIN_DIR in "${PLUGIN_DIRS[@]}"; do
-    if [ -d "$PLUGIN_DIR" ]; then
-        # 폴더 자체는 남기고 내용물만 삭제
-        rm -rf "${PLUGIN_DIR:?}/"*
-        echo "  ✓ 내용 전체 삭제됨: $PLUGIN_DIR"
-    else
-        echo "  - 없음: $PLUGIN_DIR"
-    fi
-done
+# for PLUGIN_DIR in "${PLUGIN_DIRS[@]}"; do
+#     if [ -d "$PLUGIN_DIR" ]; then
+#         # 폴더 자체는 남기고 내용물만 삭제
+#         rm -rf "${PLUGIN_DIR:?}/"*
+#         echo "  ✓ 내용 전체 삭제됨: $PLUGIN_DIR"
+#     else
+#         echo "  - 없음: $PLUGIN_DIR"
+#     fi
+# done
 
 
 # --- 5. 재부팅 여부 확인 대화상자 ---
