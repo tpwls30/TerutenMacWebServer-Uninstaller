@@ -29,8 +29,8 @@
 ### 2. 직접 빌드
 
 ```bash
-git clone https://github.com/tpwls30/teruten-uninstaller.git
-cd teruten-uninstaller
+git clone https://github.com/tpwls30/TerutenMacWebServer-Uninstaller.git
+cd TerutenMacWebServer-Uninstaller
 chmod +x build_pkg.sh
 ./build_pkg.sh
 ```
