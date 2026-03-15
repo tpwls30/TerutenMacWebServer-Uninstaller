@@ -21,7 +21,7 @@ USER_UID=$(id -u "$LOGGED_IN_USER" 2>/dev/null)
 echo "  대상 사용자: $LOGGED_IN_USER (UID: $USER_UID)"
 
 # --- 1. 관련 프로세스 강제 종료 ---
-echo "[1/4] 관련 프로세스 종료 중..."
+echo "[1/5] 관련 프로세스 종료 중..."
 
 PROCESS_NAMES=(
     "WcbManager"
@@ -51,7 +51,7 @@ else
 fi
 
 # --- 2. LaunchAgent plist 삭제 ---
-echo "[2/4] LaunchAgent plist 파일 삭제 중..."
+echo "[2/5] LaunchAgent plist 파일 삭제 중..."
 
 PLISTS=(
     "/Library/LaunchAgents/com.teruten.TerutenLocalWebServer.plist"
@@ -70,6 +70,8 @@ for PLIST in "${PLISTS[@]}"; do
 done
 
 # 앱 삭제
+echo "[3/5] 앱 및 관련 파일 삭제 중..."
+
 if [ -e "/Applications/TerutenMacWebServer.app" ]; then
     rm -rf "/Applications/TerutenMacWebServer.app"
     echo "  ✓ 삭제됨: /Applications/TerutenMacWebServer.app"
@@ -147,9 +149,26 @@ done
 #     fi
 # done
 
+# --- 4. 키체인 인증서 신뢰 설정 제거 ---
+echo "[4/5] 키체인 인증서 제거 중..."
+
+CERTS=(
+    "Teruten"
+    "localhost"
+)
+
+for CERT in "${CERTS[@]}"; do
+    ISSUER=$(security find-certificate -c "$CERT" -p /Library/Keychains/System.keychain 2>/dev/null | openssl x509 -noout -issuer 2>/dev/null)
+    if echo "$ISSUER" | grep -qi "teruten"; then
+        security delete-certificate -c "$CERT" /Library/Keychains/System.keychain 2>/dev/null
+        echo "  ✓ 제거됨: $CERT"
+    else
+        echo "  - 건너뜀 (Teruten 발급 아님): $CERT"
+    fi
+done
 
 # --- 5. 재부팅 여부 확인 대화상자 ---
-echo "[4/4] 재부팅 확인 중..."
+echo "[5/5] 재부팅 확인 중..."
 
 REBOOT_ANSWER=$(sudo -u "$LOGGED_IN_USER" osascript <<'APPLESCRIPT'
 set dialogResult to display dialog "TerutenMacWebServer 제거가 완료되었습니다." & return & return & "변경 사항을 적용하려면 재부팅이 필요합니다. 지금 재부팅하시겠습니까?" ¬

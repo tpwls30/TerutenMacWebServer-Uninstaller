@@ -2,7 +2,7 @@
 
 **TerutenMacWebServer**를 macOS에서 완전히 제거하는 pkg 언인스톨러입니다.
 
-![버전](https://img.shields.io/badge/version-v1.0.1-blue)
+![버전](https://img.shields.io/badge/version-v1.0.2-blue)
 ![플랫폼](https://img.shields.io/badge/platform-macOS-lightgrey)
 ![라이선스](https://img.shields.io/badge/license-Non--Commercial-red)
 
@@ -17,6 +17,7 @@
 | 플러그인 (사용자) | `~/Library/Internet Plug-Ins/` 내 관련 파일 |
 | LaunchAgent | `/Library/LaunchAgents/com.teruten.*.plist` |
 | LaunchAgent (사용자) | `~/Library/LaunchAgents/com.teruten.*.plist` |
+| 키체인 인증서 | `Teruten`, `localhost` |
 
 ---
 
